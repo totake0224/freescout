@@ -508,18 +508,23 @@ class Customer extends Model
      */
     public function getFullName($email_if_empty = false, $first_part_from_email = false)
     {
+        if($this->company){
+            $company = $this->company. '　';
+        }else{
+            $company = '';
+        }
         if ($this->first_name && $this->last_name) {
-            return $this->first_name.' '.$this->last_name;
+            return $company . $this->first_name.' '.$this->last_name;
         } elseif (!$this->last_name && $this->first_name) {
-            return $this->first_name;
+            return $company . $this->first_name;
         } elseif (!$this->first_name && $this->last_name) {
-            return $this->last_name;
+            return $company . $this->last_name;
         } elseif ($email_if_empty) {
             $email = $this->getMainEmail();
             if ($first_part_from_email) {
-                return $this->getNameFromEmail($email);
+                return $company . $this->getNameFromEmail($email);
             } else {
-                return $email;
+                return $company . $email;
             }
         }
 
@@ -1013,14 +1018,6 @@ class Customer extends Model
             $result = true;
         } else {
             // Update empty fields.
-            
-            // Do not set last name if first name is already set (and vise versa).
-            if (!empty($this->first_name) && !empty($data['last_name'])) {
-                unset($data['last_name']);
-            }
-            if (!empty($this->last_name) && !empty($data['first_name'])) {
-                unset($data['first_name']);
-            }
             foreach ($data as $key => $value) {
                 if (in_array($key, $this->fillable) && empty($this->$key)) {
                     $this->$key = $value;
