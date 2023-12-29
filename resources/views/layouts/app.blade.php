@@ -213,6 +213,9 @@
                                             <form class="form-inline form-nav-search" role="form" action="{{ route('conversations.search') }}" target="_blank">
                                                 <div class="input-group">
                                                     <input type="text" class="form-control" name="q">
+                                                    @if (in_array(Route::currentRouteName(), ['mailboxes.view', 'mailboxes.view.folder', 'conversations.view']))
+                                                    <input type="hidden" class="form-control" name="f[mailbox]" value="{{ app('request')->id}}">
+                                                    @endif
                                                     <span class="input-group-btn">
                                                         <button class="btn btn-default" type="submit">{{ __('Search') }}</button>
                                                     </span>
