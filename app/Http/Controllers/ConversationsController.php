@@ -2832,11 +2832,19 @@ class ConversationsController extends Controller
 
         $mode = $this->getSearchMode($request);
 
-        // Search query
-        $q = $this->getSearchQuery($request);
+    //        if($request->q && ctype_digit($request->q)){
+        if($request->q && str_starts_with($request->q,'id=')){
+            $filters = ["id"=>str_replace('id=','',$request->q)];
+//            $filters = ["id"=>$request->q];
+            $request['q']='';
+            $q='';
+        }else{
+            // Search query
+            $q = $this->getSearchQuery($request);
 
-        // Filters.
-        $filters = $this->getSearchFilters($request);
+            // Filters.
+            $filters = $this->getSearchFilters($request);
+        }
         $filters_data = [];
         // Modify filters is needed.
         if (!empty($filters['customer'])) {

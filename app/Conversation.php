@@ -504,6 +504,52 @@ class Conversation extends Model
         return $title;
     }
 
+           /**
+     * Get conversation timestamp title.
+     *
+     * @return string
+     */
+    public function getDate()
+    {
+        if ($this->threads_count == 1) {
+            $title = User::dateFormat($this->created_at, 'M j, Y H:i');
+        } else {
+            $last_reply_at = $this->created_at;
+            if ($this->last_reply_at) {
+                $last_reply_at = $this->last_reply_at;
+            }
+            $title = User::dateFormat($last_reply_at, 'M j, Y H:i');
+        }
+
+        return $title;
+    }
+
+    /**
+     * Get conversation timestamp title.
+     *
+     * @return string
+     */
+    public function getWaitingSinceTitle($folder)
+    {
+        if ($this->threads_count == 1) {
+            $title = __('Created by :person', ['person' => __(ucfirst(self::$persons[$this->source_via]))]);
+            $title .= '<br/>'.$this->getWaitingSince($folder);
+        } else {
+            $person = '';
+            if (!empty(self::$persons[$this->last_reply_from])) {
+                $person = __(ucfirst(self::$persons[$this->last_reply_from]));
+            }
+            $title = __('Last reply by :person', ['person' => $person]);
+            $last_reply_at = $this->created_at;
+            if ($this->last_reply_at) {
+                $last_reply_at = $this->last_reply_at;
+            }
+            $title .= '<br/>'.$this->getWaitingSince($folder);
+        }
+
+        return $title;
+    }
+
     public function isActive()
     {
         return $this->status == self::STATUS_ACTIVE;
